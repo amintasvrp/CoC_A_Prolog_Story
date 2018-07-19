@@ -25,18 +25,25 @@ calDamage(Damage, Defense, Atk, Def, Result) :-
 
 calDamageAdvantage(Damage,Adv,Atk,Def,DamageAdv) :-
     advantage(Atk,Def) -> DamageAdv is Damage + Adv ; DamageAdv is Damage.
-	
+
+% Auxiliar para cálculo do tamanho da lista sem erros.
 tamL([_], 1):- !.
 tamL([_|L], T) :- tamL(L, X), T is X+1.
 
-checkFinalVictory(P, R):-
-    tamL(P, T),
-    T =:= 12 -> R = true ; R = false.
+% Recebe a lista de campeões e verifica se ela está com todos os 12 (vitória).
+checkFinalVictory(Party, Result):-
+    tamL(Party, Lenght),
+    Lenght =:= 12 -> Result = true ; Result = false.
 
-checkPartialVictory(P, R):-
-    P=< 0 -> R = true ; R = false.
+% Recebe o HP do campeão inimigo e retorna true se ele estiver morto.
+checkPartialVictory(ChampionHP, Result):-
+    ChampionHP=< 0 -> Result = true ; Result = false.
 
-checkBattleLost(A,B,C,R):-
-    A =< 0 ; B =< 0 ; C =< 0 -> R = true ; R = false.
+% Fatos do battlelost
+battleLost(0,0,0).
+
+% Recebe os três HPS dos campeões da party e retorna true se todos estiverem mortos
+checkBattleLost(ChampHP1,ChampHP2,ChampHP3,Result):-
+    battleLost(ChampHP1,ChampHP2,ChampHP3) -> Result = true ; Result = false.
 
 
