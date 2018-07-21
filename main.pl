@@ -44,21 +44,12 @@ removeChampion(X, [X|List1], List1).
 removeChampion(X, [Y|List], [Y|List1]):- removeChampion(X, List, List1).
 
 % Obtém o campeão em uma lista a partir de um índice.
-<<<<<<< HEAD
 getElement(0, [H|_], H):- !.
 getElement(Ind, [_|T], C):- Z is Ind - 1, getElement(Z, T, C).
 
 % Obtém o índice de um campeão em uma lista.
 getIndex(E, [E|_], 0):- !.
 getIndex(E, [_|T], Ind):- getIndex(E, T, X), Ind is X + 1.
-=======
-getElement(0, [H|T], H):- !.
-getElement(Ind, [H|T], C):- Z is Ind - 1, getElement(Z, T, C).
-
-% Obtém o índice de um campeão em uma lista.
-getIndex(E, [E|T], 0):- !.
-getIndex(E, [H|T], Ind):- getIndex(E, T, X), Ind is X + 1.
->>>>>>> 6512fec4e9b989e3ba50b9cfb7694749a683baff
 
 % Obtém o tamanho de uma lista.
 tamL([_], 1):- !.
