@@ -1,3 +1,5 @@
+%Testando os métodos do back pra commitar resto
+
 :- initialization(menu).
 menu :- 
 write('Welcome to the Colosseum of Champions!!!'), nl,
