@@ -1,5 +1,8 @@
 %Testando os métodos do back pra commitar resto
 
+
+printSeparador():- write("-------------------------------------------------------------"),nl.
+
 :- initialization(menu).
 menu :- 
 write('Welcome to the Colosseum of Champions!!!'), nl,
