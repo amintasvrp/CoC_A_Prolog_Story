@@ -1,6 +1,6 @@
 %Testando os métodos do back pra commitar resto
 
-printSeparador():- write("-------------------------------------------------------------"),nl.
+printSeparator():- write("-------------------------------------------------------------"),nl.
 
 gameOver() :- write("
 ██████╗  █████╗ ███╗   ███╗███████╗
