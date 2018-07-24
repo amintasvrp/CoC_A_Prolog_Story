@@ -1,5 +1,9 @@
 %Testando os métodos do back pra commitar resto
 
+% Usa-se "!" para o programa não ir mais atrás de outra regra condicional.
+if(Condition,Then,Else) :- Condition, !, Then.
+if(_,_,Else) :- Else.
+
 printSeparator():- write("-------------------------------------------------------------"),nl.
 
 gameOver() :- write("
