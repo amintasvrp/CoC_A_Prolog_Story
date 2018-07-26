@@ -2,6 +2,39 @@
 %% IMPLEMENTAÇÕES FRONT
 %
 
+% Mostrar Team
+thisIsYourTeam(Champions, Team, Party, Enemy) :- writeln("This is your team :"), printList(1, Team), selectYourParty(Champions, Team, Party, Enemy).
+
+%Escolher Ordem da Party
+selectYourParty(Champions, Team, Party, Enemy) :-
+    writeln(" Select your party :"), 
+    read(First),
+    read(Second),
+    read(Third),
+    FirstIndex is First - 1,
+    SecondIndex is Second - 1,
+    ThirdIndex is Third - 1,
+    getElement(FirstIndex, Team, Champ1),
+    getElement(SecondIndex, Team, Champ2),
+    getElement(ThirdIndex, Team, Champ3),
+    addChampion(Champ1, Party, Party1),
+    addChampion(Champ2, Party1, Party2),
+    addChampion(Champ3, Party2, Party3),
+    writeln("This is your party :"),
+    printList(1, Party3),
+    yourEnemy(Champions, Team, Party3, Enemy).
+
+%Mostrar Inimigo
+yourEnemy(Champions, Team, Party, Enemy) :- 
+    writeln("This is your enemy :"),
+    printList(1, Enemy),
+    % SÓ PRA TESTAR %
+    writeln(Champions),writeln(Team),writeln(Party).
+
+% Printar todos os elementos de uma lista, enumerados
+printList(N ,[H]) :- write(N), write(" - "), writeln(H).
+printList(N, [H|T]) :- write(N), write(" - "), writeln(H), NewN is N + 1, printList(NewN,T).
+
 %
 %% FATOS
 %
@@ -34,9 +67,9 @@ battleLost(0,0,0).
 %
 
 % Adiciona um campeão em uma lista.
-addChampionBegin(X, L, [X|L]).
-addChampionEnd(T, [H], L):- addChampionBegin(H, [T], L).
-addChampionEnd(N, [H|T], L):- addChampionEnd(N, T, X), addChampionBegin(H, X, L).
+addChampion(X, L, [X|L]).
+addChampion(T, [H], L):- addChampion(H, [T], L).
+addChampion(N, [H|T], L):- addChampion(N, T, X), addChampion(H, X, L).
 
 % Remove um campeão de uma lista.
 removeChampion(Y, [Y], []).
