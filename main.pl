@@ -6,25 +6,23 @@
 
 main :-
     Champions = ["Spider-Man","Black Panther","Winter Soldier","Captain America","Iron Man","Wolverine","Deadpool","Loki","Ultron","Doctor Strange","Thanos","Thor"],
-    write("Champions : "), writeln(Champions), 
-
     createTeam(Champions, Team, Champions1),
-    write("Team      : "), write(Team), nl,
-    write("Champions1: "), write(Champions1), nl,
-
     createEnemy(Champions1, Enemy, Champions2),
-    write("Enemy     : "), write(Enemy), nl,
-    write("Champions2: "), write(Champions2), nl.
+    nl, writeln("Welcome to the Colosseum of Champions!!!"),
+    writeln("Get ready for a great adventure that could"), 
+    writeln("result in your glory..."),
+    writeln("...or in your oblivion..."),nl,
+    thisIsYourTeam(Champions2, Team, [], Enemy). 
 
 % Mostrar Team
 thisIsYourTeam(Champions, Team, Party, Enemy) :-
-    writeln("This is your team :"),
-    printList(1, Team),
+    writeln("This is your team :"), nl,
+    printList(1, Team), nl,
     selectYourParty(Champions, Team, Party, Enemy).
 
 %Escolher Ordem da Party
 selectYourParty(Champions, Team, Party, Enemy) :-
-    writeln(" Select your party :"), 
+    writeln("Select your party :"), nl, 
     read(First),
     read(Second),
     read(Third),
@@ -37,8 +35,8 @@ selectYourParty(Champions, Team, Party, Enemy) :-
     addChampion(Champ1, Party, Party1),
     addChampion(Champ2, Party1, Party2),
     addChampion(Champ3, Party2, Party3),
-    writeln("This is your party :"),
-    printList(1, Party3),
+    nl, writeln("This is your party :"), nl,
+    printList(1, Party3), nl,
     yourEnemy(Champions, Team, Party3, Enemy).
 
 %Mostrar Inimigo
