@@ -16,13 +16,13 @@ main :-
 
 % Mostrar Team
 thisIsYourTeam(Champions, Team, Party, Enemy) :-
-    writeln("This is your team :"), nl,
+    writeln("This is your team:"), nl,
     printList(1, Team), nl,
     selectYourParty(Champions, Team, Party, Enemy).
 
 %Escolher Ordem da Party
 selectYourParty(Champions, Team, Party, Enemy) :-
-    writeln("Select your party :"), nl, 
+    writeln("Select your party:"), nl, 
     read(First),
     read(Second),
     read(Third),
@@ -35,13 +35,13 @@ selectYourParty(Champions, Team, Party, Enemy) :-
     addChampion(Champ1, Party, Party1),
     addChampion(Champ2, Party1, Party2),
     addChampion(Champ3, Party2, Party3),
-    nl, writeln("This is your party :"), nl,
+    nl, writeln("This is your party:"), nl,
     printList(1, Party3), nl,
     yourEnemy(Champions, Team, Party3, Enemy).
 
 %Mostrar Inimigo
 yourEnemy(Champions, Team, Party, Enemy) :- 
-    writeln("This is your enemy :"),
+    writeln("This is your enemy:"),
     printList(1, Enemy),
     % SÓ PRA TESTAR %
     writeln(Champions),writeln(Team),writeln(Party).
