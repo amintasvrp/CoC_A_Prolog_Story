@@ -34,9 +34,9 @@ battleLost(0,0,0).
 %
 
 % Adiciona um campeão em uma lista.
-addChampion(X, L, [X|L]).
-addChampion(T, [H], L):- addChampion(H, [T], L).
-addChampion(N, [H|T], L):- addChampion(N, T, X), addChampion(H, X, L).
+addChampionBegin(X, L, [X|L]).
+addChampionEnd(T, [H], L):- addChampionBegin(H, [T], L).
+addChampionEnd(N, [H|T], L):- addChampionEnd(N, T, X), addChampionBegin(H, X, L).
 
 % Remove um campeão de uma lista.
 removeChampion(Y, [Y], []).
