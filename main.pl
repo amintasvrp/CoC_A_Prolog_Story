@@ -112,24 +112,21 @@ tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 createTeam([], []).
 createTeam(Champions, Team, NewChampions) :-
     % Escolha do primeiro teammate aleatório
-    length(Champions, Length),
-    random(0, Length, Index),
+    random(0, 5, Index),
     nth0(Index, Champions, Elem),
     
     addChampion(Elem, [], List1),
     removeChampion(Elem, Champions, List2),
     
     % Escolha do segundo teammate aleatório
-    length(List2, Length2),
-    random(0, Length2, Index2),
+    random(0, 4, Index2),
     nth0(Index2, List2, Elem2),
     
     addChampion(Elem2, List1, List3),
     removeChampion(Elem2, List2, List4),
 
     % Escolha do terceiro teammate aleatório
-    length(List4, Length4),
-    random(0, Length4, Index4),
+    random(0, 3, Index4),
     nth0(Index4, List4, Elem4),
     
     addChampion(Elem4, List3, Team),
