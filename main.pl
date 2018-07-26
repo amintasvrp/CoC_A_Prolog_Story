@@ -81,9 +81,10 @@ battleLost(0,0,0).
 %
 
 % Adiciona um campeão em uma lista.
-addChampion(X, L, [X|L]).
-addChampion(T, [H], L):- addChampion(H, [T], L).
-addChampion(N, [H|T], L):- addChampion(N, T, X), addChampion(H, X, L).
+addChampionBegin(Champ, Lista, [Champ|Lista]).
+addChampion(Champ, [], [Champ]).
+addChampion(Champ,[Head],[Head|[Champ]]).
+addChampion(Champ, [Head|Tail], Result):- addChampion(Champ, Tail, ResultTail), addChampionBegin(Head, ResultTail, Result).
 
 % Remove um campeão de uma lista.
 removeChampion(Y, [Y], []).
@@ -105,7 +106,6 @@ tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 %
 %% IMPLEMENTAÇÕES BACK
 %
-
   
 
 % Cria a lista `team` baseando-se na lista `champions`
