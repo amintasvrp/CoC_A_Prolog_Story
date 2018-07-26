@@ -5,19 +5,22 @@
 %
 
 main :-
-        Champions = ["Spider-Man","Black Panther","Winter Soldier","Captain America","Iron Man","Wolverine", "Deadpool", "Loki", "Ultron", "Doctor Strange", "Thanos", "Thor"],
-        write("Champions : "), writeln(Champions), 
+    Champions = ["Spider-Man","Black Panther","Winter Soldier","Captain America","Iron Man","Wolverine","Deadpool","Loki","Ultron","Doctor Strange","Thanos","Thor"],
+    write("Champions : "), writeln(Champions), 
 
-        createTeam(Champions, Team, Champions1),
-        write("Team      : "), write(Team), nl,
-        write("Champions1: "), write(Champions1), nl,
-        
-        createEnemy(Champions1, Enemy, Champions2),
-        write("Enemy     : "), write(Enemy), nl,
-        write("Champions2: "), write(Champions2), nl.
+    createTeam(Champions, Team, Champions1),
+    write("Team      : "), write(Team), nl,
+    write("Champions1: "), write(Champions1), nl,
+
+    createEnemy(Champions1, Enemy, Champions2),
+    write("Enemy     : "), write(Enemy), nl,
+    write("Champions2: "), write(Champions2), nl.
 
 % Mostrar Team
-thisIsYourTeam(Champions, Team, Party, Enemy) :- writeln("This is your team :"), printList(1, Team), selectYourParty(Champions, Team, Party, Enemy).
+thisIsYourTeam(Champions, Team, Party, Enemy) :-
+    writeln("This is your team :"),
+    printList(1, Team),
+    selectYourParty(Champions, Team, Party, Enemy).
 
 %Escolher Ordem da Party
 selectYourParty(Champions, Team, Party, Enemy) :-
@@ -106,27 +109,24 @@ tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 %
 %% IMPLEMENTAÇÕES BACK
 %
-  
 
 % Cria a lista `team` baseando-se na lista `champions`
-% List5: lista `team`
-% List6: lista `champions` após a remoção dos teammates
 createTeam([], []).
-createTeam(List, List5, List6) :-
+createTeam(Champions, Team, NewChampions) :-
     % Escolha do primeiro teammate aleatório
-    length(List, Length),
+    length(Champions, Length),
     random(0, Length, Index),
-    nth0(Index, List, Elem),
+    nth0(Index, Champions, Elem),
     
-    addChampionBegin(Elem, [], List1),
-    removeChampion(Elem, List, List2),
+    addChampion(Elem, [], List1),
+    removeChampion(Elem, Champions, List2),
     
     % Escolha do segundo teammate aleatório
     length(List2, Length2),
     random(0, Length2, Index2),
     nth0(Index2, List2, Elem2),
     
-    addChampionEnd(Elem2, List1, List3),
+    addChampion(Elem2, List1, List3),
     removeChampion(Elem2, List2, List4),
 
     % Escolha do terceiro teammate aleatório
@@ -134,21 +134,19 @@ createTeam(List, List5, List6) :-
     random(0, Length4, Index4),
     nth0(Index4, List4, Elem4),
     
-    addChampionEnd(Elem4, List3, Team),
-    removeChampion(Elem4, List4, List6).
+    addChampion(Elem4, List3, Team),
+    removeChampion(Elem4, List4, NewChampions).
 
 % Cria a lista `enemy` baseando-se na lista `champions`
-% List1: lista `enemy`
-% List2: lista `champions` após a remoção do inimigo
 createEnemy([], []).
-createEnemy(List, List1, List2) :-
+createEnemy(Champions, Enemy, NewChampions) :-
     % Escolha do inimigo aleatório
-    length(List, Length),
+    length(Champions, Length),
     random(0, Length, Index),
-    nth0(Index, List, Elem),
+    nth0(Index, Champions, Elem),
     
-    addChampionBegin(Elem, [], List1),
-    removeChampion(Elem, List, List2).
+    addChampionBegin(Elem, [], Enemy),
+    removeChampion(Elem, Champions, NewChampions).
 
 % Cálculo do dano do atacante, considerando a defesa do defensor e a relacao de vantagem entre classes
 calDamage(Damage, Defense, Atk, Def, Result) :- 
@@ -169,6 +167,5 @@ checkPartialVictory(ChampionHP, Result):-
     ChampionHP=< 0 -> Result = true ; Result = false.
 
 % Recebe os três HPS dos campeões da party e verifica se todos estão derrotados
-checkBattleLost(ChampHP1,ChampHP2,ChampHP3,Result):-
-
-battleLost(ChampHP1,ChampHP2,ChampHP3) -> Result = true ; Result = false.
+checkBattleLost(ChampHP1,ChampHP2,ChampHP3,Result) :-
+    battleLost(ChampHP1,ChampHP2,ChampHP3) -> Result = true ; Result = false.
