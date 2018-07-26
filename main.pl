@@ -1,3 +1,5 @@
+:- initialization(main).
+
 %
 %% IMPLEMENTAÇÕES FRONT
 %
@@ -59,6 +61,65 @@ tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 %% IMPLEMENTAÇÕES BACK
 %
 
+% Cria a lista `champions`
+createChampions(Champions) :-
+    Champions = [
+                "Spider-Man",
+                "Black Panther",
+                "Winter Soldier",
+                "Captain America",
+                "Iron Man",
+                "Wolverine",
+                "Deadpool",
+                "Loki",
+                "Ultron",
+                "Doctor Strange",
+                "Thanos",
+                "Thor"
+                ].
+
+% Cria a lista `team` baseando-se na lista `champions`
+% List5: lista `team`
+% List6: lista `champions` após a remoção dos teammates
+createTeam([], []).
+createTeam(List, List5, List6) :-
+    % Escolha do primeiro teammate aleatório
+    length(List, Length),
+    random(0, Length, Index),
+    nth0(Index, List, Elem),
+    
+    addChampionBegin(Elem, [], List1),
+    removeChampion(Elem, List, List2),
+    
+    % Escolha do segundo teammate aleatório
+    length(List2, Length2),
+    random(0, Length2, Index2),
+    nth0(Index2, List2, Elem2),
+    
+    addChampionEnd(Elem2, List1, List3),
+    removeChampion(Elem2, List2, List4),
+
+    % Escolha do terceiro teammate aleatório
+    length(List4, Length4),
+    random(0, Length4, Index4),
+    nth0(Index4, List4, Elem4),
+    
+    addChampionEnd(Elem4, List3, List5),
+    removeChampion(Elem4, List4, List6).
+
+% Cria a lista `enemy` baseando-se na lista `champions`
+% List1: lista `enemy`
+% List2: lista `champions` após a remoção do inimigo
+createEnemy([], []).
+createEnemy(List, List1, List2) :-
+    % Escolha do inimigo aleatório
+    length(List, Length),
+    random(0, Length, Index),
+    nth0(Index, List, Elem),
+    
+    addChampionBegin(Elem, [], List1),
+    removeChampion(Elem, List, List2).
+
 % Cálculo do dano do atacante, considerando a defesa do defensor e a relacao de vantagem entre classes
 calDamage(Damage, Defense, Atk, Def, Result) :- 
     Adv is Damage / 4, 
@@ -80,3 +141,15 @@ checkPartialVictory(ChampionHP, Result):-
 % Recebe os três HPS dos campeões da party e verifica se todos estão derrotados
 checkBattleLost(ChampHP1,ChampHP2,ChampHP3,Result):-
     battleLost(ChampHP1,ChampHP2,ChampHP3) -> Result = true ; Result = false.
+
+main :-
+    createChampions(Champions),
+    write("Champions : "), write(Champions), nl,
+    
+    createTeam(Champions, Team, Champions1),
+    write("Team      : "), write(Team), nl,
+    write("Champions1: "), write(Champions1), nl,
+    
+    createEnemy(Champions1, Enemy, Champions2),
+    write("Enemy     : "), write(Enemy), nl,
+    write("Champions2: "), write(Champions2), nl.
