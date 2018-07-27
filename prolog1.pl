@@ -82,17 +82,18 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
 
 
-    (Attack =:= 2, AttackerSpecial =:= 5) -> 
+    (Attack =:= 2, AttackerSpecial >= 5) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
     champion(_,Attacker,_,_,AttackerSpecialAttack,_),
     champion(EnemyClass,Enemy,_,_,_,_),
     champion(_,Enemy,_,_,_,EnemyDef),
     calDamage(AttackerSpecialAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
     NewEnemyHP is EnemyHP - Damage,
+    NewAttackerSpecial is AttackerSpecial - 5,
     write(Attacker), write(" caused "), write(Damage), write(" damage."), nl, nl,
-    verifyWin(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, NewEnemyHP, EnemySpecial);
+    verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
 
-    (Attack =:= 2, AttackerSpecial =\= 5) -> nl, writeln("This action is unavailable, please try again..."), nl, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
+    (Attack =:= 2, AttackerSpecial < 5) -> nl, writeln("This action is unavailable, please try again..."), nl, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
     
     writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial)).
 
