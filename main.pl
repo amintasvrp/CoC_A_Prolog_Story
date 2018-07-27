@@ -21,7 +21,7 @@ intro :-
     
 % Mostrar Team
 thisIsYourTeam(Champions, Team, Party, Enemy) :-
-    writeln("This is your team:"),
+    writeln("(TEAM)"),
     printList(1, Team), nl,
     selectYourParty(Champions, Team, Party, Enemy).
 
@@ -40,26 +40,29 @@ selectYourParty(Champions, Team, Party, Enemy) :-
     addChampion(Champ1, Party, Party1),
     addChampion(Champ2, Party1, Party2),
     addChampion(Champ3, Party2, Party3),
-    nl, writeln("This is your party:"),
+    nl, writeln("(PARTY)"),
     printList(1, Party3), nl,
     yourEnemy(Champions, Team, Party3, Enemy).
 
 %Mostrar Inimigo
-yourEnemy(Champions, Team, Party, Enemy) :- 
-    writeln("This is your enemy:"),
-    printList(1, Enemy), nl,
+yourEnemy(Champions, Team, Party, Enemy) :-
+    writeln("(ENEMY)"),
+    printList(Enemy), nl,
     battleBegin(Champions, Team, Party, Enemy).
 
 battleBegin(Champions, Team, [Attacker|Party], [Enemy|_]) :-
-    writeln("Let the battle begin:"),
+    writeln("Let the battle begin!"),
     champion(_,Attacker,AttackerHP,_,_,_),
     champion(_,Enemy,EnemyHP,_,_,_),
     attack(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, EnemyHP, 0).
 
 attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial) :-
-    write("Your Champion: "), write(Attacker), write(" HP: "), write(AttackerHP), write(" Special: "), write(AttackerSpecial), writeln("/5"),
-    write("Your Enemy: "), write(Enemy), write(" HP: "), write(EnemyHP),
-    writeln("Choose your Attack: 1 - Normal 2 - Special"),
+    write("(YOU) "), write(Attacker), write(" | "), write("HP: "), write(AttackerHP), write(" | "), write("Special: "), write(AttackerSpecial), write("/5"), nl,
+    write("(ENEMY) "), write(Enemy), write(" | "), write("HP: "), write(EnemyHP), write(" | "), write("Special: "), write(EnemySpecial), write("/5"), nl, nl,
+    
+    writeln("Choose your Attack:"),
+    write("1 - Normal"), nl,
+    write("2 - Special"), nl,
     read(Attack),
     
     Attack =:= 1 -> 
@@ -70,7 +73,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     calDamage(AttackerNormalAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
     NewEnemyHP is EnemyHP - Damage,
     NewAttackerSpecial is AttackerSpecial + 1,
-    write(Attacker), write(" caused "), write(Damage), write(" damage"),
+    nl, write(Attacker), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
     
     Attack =:= 2, AttackerSpecial =:= 5 -> 
@@ -97,15 +100,10 @@ defend(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, Ene
         Champions = Champions, Team = Team, Party = Party, Enemy = Enemy, Defender = Defender, DefenderHP = DefenderHP,
         DefenderSpecial = DefenderSpecial, EnemyHP = EnemyHP, EnemySpecial = EnemySpecial.
     
-
-
-
-
-
-
 % Printar todos os elementos de uma lista, enumerados
-printList(N ,[H]) :- write(N), write(" - "), writeln(H).
-printList(N, [H|T]) :- write(N), write(" - "), writeln(H), NewN is N + 1, printList(NewN,T).
+printList([H]) :- champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H).
+printList(N, [H]) :- write("0"), write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H).
+printList(N, [H|T]) :- write("0"), write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H), NewN is N + 1, printList(NewN,T).
 
 %
 %% FATOS
