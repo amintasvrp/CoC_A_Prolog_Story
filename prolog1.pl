@@ -14,10 +14,11 @@ menu :-
     (Input =:= 1 ->
         nl, main;
     Input =:= 2 ->
+        nl, write('That is sad, wish you had played'),  nl,
         nl, menu).
 
 main:-
-    Champions = ["Spider-Man","Black Panther","Winter Soldier","Captain America","Iron Man","Wolverine","Deadpool","Loki","Ultron","Doctor Strange","Thanos","Thor"],
+    Champions = ["Black Panther","Winter Soldier","Spider-Man","Captain America","Iron Man","Wolverine","Deadpool","Loki","Ultron","Doctor Strange","Thanos","Thor"],
     Party = [],
     createTeam(Champions, Team, Champions1),
     createEnemy(Champions1, Enemy, Champions2),
@@ -68,7 +69,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     write("1 - Normal"), nl,
     write("2 - Special"), nl,
     read(Attack),
-    
+
     ((Attack =:= 1) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
     champion(_,Attacker,_,AttackerNormalAttack,_,_), 
@@ -76,10 +77,11 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     champion(_,Enemy,_,_,_,EnemyDef),
     calDamage(AttackerNormalAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
     NewEnemyHP is EnemyHP - Damage,
-    AttackerSpecial < 5 -> (NewAttackerSpecial is AttackerSpecial + 1 ; NewAttackerSpecial is 5),
+    NewAttackerSpecial is AttackerSpecial + 1,
     nl, write(Attacker), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
-    
+
+
     (Attack =:= 2, AttackerSpecial =:= 5) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
     champion(_,Attacker,_,_,AttackerSpecialAttack,_),
@@ -143,7 +145,21 @@ verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial) :-
     champion(_,NewAttacker,NewAttackerHP,_,_,_),
     attack(Champions, Team, NewParty, NewAttacker, NewAttackerHP, 0, Enemy, EnemyHP, EnemySpecial).
 
-youLose :- writeln("Mission Failed: Game Over").
+youLose :- write("
+██████╗  █████╗ ███╗   ███╗███████╗
+██╔════╝ ██╔══██╗████╗ ████║██╔════╝
+██║  ███╗███████║██╔████╔██║█████╗
+██║   ██║██╔══██║██║╚██╔╝██║██╔══╝
+╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗
+╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
+
+██████╗ ██╗   ██╗███████╗██████╗
+██╔═══██╗██║   ██║██╔════╝██╔══██╗
+██║   ██║██║   ██║█████╗  ██████╔╝
+██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗
+╚██████╔╝ ╚████╔╝ ███████╗██║  ██║
+╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝").
+
 
 
 % Printar todos os elementos de uma lista, enumerados
