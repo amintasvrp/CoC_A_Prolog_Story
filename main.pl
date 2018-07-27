@@ -6,23 +6,28 @@
 
 main :-
     Champions = ["Spider-Man","Black Panther","Winter Soldier","Captain America","Iron Man","Wolverine","Deadpool","Loki","Ultron","Doctor Strange","Thanos","Thor"],
+    Party = [],
     createTeam(Champions, Team, Champions1),
     createEnemy(Champions1, Enemy, Champions2),
-    nl, writeln("Welcome to the Colosseum of Champions!!!"),
+    intro,
+    thisIsYourTeam(Champions2, Team, Party, Enemy). 
+
+% Cabeçalho
+intro :-
+    writeln("Welcome to the Colosseum of Champions!!!"),
     writeln("Get ready for a great adventure that could"), 
     writeln("result in your glory..."),
-    writeln("...or in your oblivion..."),nl,
-    thisIsYourTeam(Champions2, Team, [], Enemy). 
-
+    writeln("...or in your oblivion..."), nl.
+    
 % Mostrar Team
 thisIsYourTeam(Champions, Team, Party, Enemy) :-
-    writeln("This is your team:"), nl,
+    writeln("This is your team:"),
     printList(1, Team), nl,
     selectYourParty(Champions, Team, Party, Enemy).
 
 %Escolher Ordem da Party
 selectYourParty(Champions, Team, Party, Enemy) :-
-    writeln("Select your party:"), nl, 
+    writeln("Select your party:"),
     read(First),
     read(Second),
     read(Third),
@@ -35,16 +40,68 @@ selectYourParty(Champions, Team, Party, Enemy) :-
     addChampion(Champ1, Party, Party1),
     addChampion(Champ2, Party1, Party2),
     addChampion(Champ3, Party2, Party3),
-    nl, writeln("This is your party:"), nl,
+    nl, writeln("This is your party:"),
     printList(1, Party3), nl,
     yourEnemy(Champions, Team, Party3, Enemy).
 
 %Mostrar Inimigo
 yourEnemy(Champions, Team, Party, Enemy) :- 
     writeln("This is your enemy:"),
-    printList(1, Enemy),
-    % SÓ PRA TESTAR %
-    writeln(Champions),writeln(Team),writeln(Party).
+    printList(1, Enemy), nl,
+    battleBegin(Champions, Team, Party, Enemy).
+
+battleBegin(Champions, Team, [Attacker|Party], [Enemy|_]) :-
+    writeln("Let the battle begin:"),
+    champion(_,Attacker,AttackerHP,_,_,_),
+    champion(_,Enemy,EnemyHP,_,_,_),
+    attack(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, EnemyHP, 0).
+
+attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial) :-
+    write("Your Champion: "), write(Attacker), write(" HP: "), write(AttackerHP), write(" Special: "), write(AttackerSpecial), writeln("/5"),
+    write("Your Enemy: "), write(Enemy), write(" HP: "), write(EnemyHP),
+    writeln("Choose your Attack: 1 - Normal 2 - Special"),
+    read(Attack),
+    
+    Attack =:= 1 -> 
+    champion(AttackerClass,Attacker,_,_,_,_),
+    champion(_,Attacker,_,AttackerNormalAttack,_,_), 
+    champion(EnemyClass,Enemy,_,_,_,_),
+    champion(_,Enemy,_,_,_,EnemyDef),
+    calDamage(AttackerNormalAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
+    NewEnemyHP is EnemyHP - Damage,
+    NewAttackerSpecial is AttackerSpecial + 1,
+    write(Attacker), write(" caused "), write(Damage), write(" damage"),
+    verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
+    
+    Attack =:= 2, AttackerSpecial =:= 5 -> 
+    champion(AttackerClass,Attacker,_,_,_,_),
+    champion(_,Attacker,_,_,AttackerSpecialAttack,_), 
+    champion(EnemyClass,Enemy,_,_,_,_),
+    champion(_,Enemy,_,_,_,EnemyDef),
+    calDamage(AttackerSpecialAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
+    NewEnemyHP is EnemyHP - Damage,
+    write(Attacker), write(" caused "), write(Damage), write(" damage"),
+    verifyWin(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, NewEnemyHP, EnemySpecial);
+
+    Attack =:= 2, AttackerSpecial =\= 5 -> writeln("This action is unavailable, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
+    
+    writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).      
+
+verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial):- 
+    EnemyHP =< 0 -> writeln("Congratulations, you win !"), newTeammate(Champions, Team, Party, Enemy);
+    defend(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).
+
+newTeammate(Champions, Team, Party, Enemy):- Champions = Champions, Team = Team, Party = Party, Enemy = Enemy.
+
+defend(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial):-
+        Champions = Champions, Team = Team, Party = Party, Enemy = Enemy, Defender = Defender, DefenderHP = DefenderHP,
+        DefenderSpecial = DefenderSpecial, EnemyHP = EnemyHP, EnemySpecial = EnemySpecial.
+    
+
+
+
+
+
 
 % Printar todos os elementos de uma lista, enumerados
 printList(N ,[H]) :- write(N), write(" - "), writeln(H).
@@ -85,23 +142,23 @@ battleLost(0,0,0).
 addChampionBegin(Champ, Lista, [Champ|Lista]).
 addChampion(Champ, [], [Champ]).
 addChampion(Champ,[Head],[Head|[Champ]]).
-addChampion(Champ, [Head|Tail], Result):- addChampion(Champ, Tail, ResultTail), addChampionBegin(Head, ResultTail, Result).
+addChampion(Champ, [Head|Tail], Result) :- addChampion(Champ, Tail, ResultTail), addChampionBegin(Head, ResultTail, Result).
 
 % Remove um campeão de uma lista.
 removeChampion(Y, [Y], []).
 removeChampion(X, [X|List1], List1).
-removeChampion(X, [Y|List], [Y|List1]):- removeChampion(X, List, List1).
+removeChampion(X, [Y|List], [Y|List1]) :- removeChampion(X, List, List1).
 
 % Obtém o campeão em uma lista a partir de um índice.
-getElement(0, [H|_], H):- !.
-getElement(Ind, [_|T], C):- Z is Ind - 1, getElement(Z, T, C).
+getElement(0, [H|_], H) :- !.
+getElement(Ind, [_|T], C) :- Z is Ind - 1, getElement(Z, T, C).
 
 % Obtém o índice de um campeão em uma lista.
-getIndex(E, [E|_], 0):- !.
-getIndex(E, [_|T], Ind):- getIndex(E, T, X), Ind is X + 1.
+getIndex(E, [E|_], 0) :- !.
+getIndex(E, [_|T], Ind) :- getIndex(E, T, X), Ind is X + 1.
 
 % Obtém o tamanho de uma lista.
-tamL([_], 1):- !.
+tamL([_], 1) :- !.
 tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 
 %
@@ -153,12 +210,12 @@ calDamageAdvantage(Damage,Adv,Atk,Def,DamageAdv) :-
     advantage(Atk,Def) -> DamageAdv is Damage + Adv ; DamageAdv is Damage.
 
 % Recebe a lista de campeões e verifica se ela está com todos os 12 (vitória).
-checkFinalVictory(Party, Result):-
+checkFinalVictory(Party, Result) :-
     tamL(Party, Lenght),
     Lenght =:= 12 -> Result = true ; Result = false.
 
 % Recebe o HP do campeão inimigo e verifica se ele estiver morto.
-checkPartialVictory(ChampionHP, Result):-
+checkPartialVictory(ChampionHP, Result) :-
     ChampionHP=< 0 -> Result = true ; Result = false.
 
 % Recebe os três HPS dos campeões da party e verifica se todos estão derrotados
