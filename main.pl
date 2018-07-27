@@ -72,7 +72,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     champion(_,Enemy,_,_,_,EnemyDef),
     calDamage(AttackerNormalAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
     NewEnemyHP is EnemyHP - Damage,
-    NewAttackerSpecial is AttackerSpecial + 1,
+    AttackerSpecial < 5 -> (NewAttackerSpecial is AttackerSpecial + 1 ; NewAttackerSpecial is 5),
     nl, write(Attacker), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
     
@@ -91,19 +91,18 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial)).
 
 verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial) :-
-    EnemyHP =< 0 -> writeln("Congratulations, you win!"), nl, newTeammate(Champions, Team, Party, Enemy);
+    EnemyHP =< 0 -> writeln("Congratulations, you win!"), nl, newTeammate(Champions, Team, Enemy);
     defend(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).
 
-newTeammate(Champions, Team, Party, Enemy):-
+newTeammate(Champions, Team, Enemy):-
     addChampion(Enemy, Team, NewTeam),
     tamL(NewTeam,LengthNewTeam),
     
     ((LengthNewTeam =:= 12) -> youWin ;
     createEnemy(Champions, NewEnemy, NewChampions),
-    Party = [], 
-    thisIsYourTeam(NewChampions, NewTeam, Party, NewEnemy)).
+    thisIsYourTeam(NewChampions, NewTeam, [], NewEnemy)).
 
-youWin :- writeLn("Mission Complete: Congratulations, you got the grace of the champions.").
+youWin :- writeln("Mission Complete: Congratulations, you got the grace of the champions.").
 
 defend(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial):-
     EnemySpecial =\= 5 -> 
@@ -145,8 +144,8 @@ youLose :- writeln("Mission Failed: Game Over").
 
 % Printar todos os elementos de uma lista, enumerados
 printList([H]) :- champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H).
-printList(N, [H]) :- write("0"), write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H).
-printList(N, [H|T]) :- write("0"), write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H), NewN is N + 1, printList(NewN,T).
+printList(N, [H]) :- write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H).
+printList(N, [H|T]) :- write(N), write(" - "), champion(C, H, _, _, _, _), write("["), write(C), write("]"), write(" "), writeln(H), NewN is N + 1, printList(NewN,T).
 
 %
 %% FATOS
@@ -199,8 +198,9 @@ getIndex(E, [E|_], 0) :- !.
 getIndex(E, [_|T], Ind) :- getIndex(E, T, X), Ind is X + 1.
 
 % Obtém o tamanho de uma lista.
-tamL([_], 1) :- !.
-tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
+tamL([], 0).
+tamL([_|Tail], Tamanho) :- tamL(Tail, Result), Tamanho is Result+1.
+
 
 %
 %% IMPLEMENTAÇÕES BACK
@@ -210,21 +210,21 @@ tamL([_|L], Tamanho) :- tamL(L, X), Tamanho is X+1.
 createTeam([], []).
 createTeam(Champions, Team, NewChampions) :-
     % Escolha do primeiro teammate aleatório
-    random(0, 5, Index),
+    random_between(0, 5, Index),
     nth0(Index, Champions, Elem),
     
     addChampion(Elem, [], List1),
     removeChampion(Elem, Champions, List2),
     
     % Escolha do segundo teammate aleatório
-    random(0, 4, Index2),
+    random_between(0, 4, Index2),
     nth0(Index2, List2, Elem2),
     
     addChampion(Elem2, List1, List3),
     removeChampion(Elem2, List2, List4),
 
     % Escolha do terceiro teammate aleatório
-    random(0, 3, Index4),
+    random_between(0, 3, Index4),
     nth0(Index4, List4, Elem4),
     
     addChampion(Elem4, List3, Team),
