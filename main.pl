@@ -10,12 +10,12 @@ main :-
     createTeam(Champions, Team, Champions1),
     createEnemy(Champions1, Enemy, Champions2),
     intro,
-    thisIsYourTeam(Champions2, Team, Party, Enemy). 
+    thisIsYourTeam(Champions2, Team, Party, Enemy).
 
 % Cabeçalho
 intro :-
     writeln("Welcome to the Colosseum of Champions!!!"),
-    writeln("Get ready for a great adventure that could"), 
+    writeln("Get ready for a great adventure that could"),
     writeln("result in your glory..."),
     writeln("...or in your oblivion..."), nl.
     
@@ -65,7 +65,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     write("2 - Special"), nl,
     read(Attack),
     
-    Attack =:= 1 -> 
+    ((Attack =:= 1) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
     champion(_,Attacker,_,AttackerNormalAttack,_,_), 
     champion(EnemyClass,Enemy,_,_,_,_),
@@ -78,29 +78,30 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     
     (Attack =:= 2, AttackerSpecial =:= 5) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
-    champion(_,Attacker,_,_,AttackerSpecialAttack,_), 
+    champion(_,Attacker,_,_,AttackerSpecialAttack,_),
     champion(EnemyClass,Enemy,_,_,_,_),
     champion(_,Enemy,_,_,_,EnemyDef),
     calDamage(AttackerSpecialAttack, EnemyDef, AttackerClass, EnemyClass, Damage),
     NewEnemyHP is EnemyHP - Damage,
-    write(Attacker), write(" caused "), write(Damage), write(" damage"),
+    write(Attacker), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, NewEnemyHP, EnemySpecial);
 
-    (Attack =:= 2, AttackerSpecial =\= 5) -> writeln("This action is unavailable, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
+    (Attack =:= 2, AttackerSpecial =\= 5) -> nl, writeln("This action is unavailable, please try again..."), nl, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
     
-    writeln("Wrong answer, please try again..."), Attack = Attack, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).      
+    writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial)).
 
-verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial):- 
-    EnemyHP =< 0 -> writeln("Congratulations, you win !"), newTeammate(Champions, Team, Party, Enemy);
+verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial) :-
+    EnemyHP =< 0 -> writeln("Congratulations, you win!"), nl, newTeammate(Champions, Team, Party, Enemy);
     defend(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).
 
 newTeammate(Champions, Team, Party, Enemy):-
     addChampion(Enemy, Team, NewTeam),
     tamL(NewTeam,LengthNewTeam),
-    LengthNewTeam =:= 12 -> youWin ;
+    
+    ((LengthNewTeam =:= 12) -> youWin ;
     createEnemy(Champions, NewEnemy, NewChampions),
     Party = [], 
-    thisIsYourTeam(NewChampions, NewTeam, Party, NewEnemy).
+    thisIsYourTeam(NewChampions, NewTeam, Party, NewEnemy)).
 
 youWin :- writeLn("Mission Complete: Congratulations, you got the grace of the champions.").
 
@@ -109,24 +110,24 @@ defend(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, Ene
     champion(DefenderClass,Defender,_,_,_,_),
     champion(_,Defender,_,_,_,DefenderDef),
     champion(EnemyClass,Enemy,_,_,_,_),
-    champion(_,Enemy,_,EnemyNormalAttack,_,_),    
+    champion(_,Enemy,_,EnemyNormalAttack,_,_),
     calDamage(EnemyNormalAttack, DefenderDef, EnemyClass, DefenderClass, Damage),
     NewDefenderHP is DefenderHP - Damage,
     NewEnemySpecial is EnemySpecial + 1,
-    write(Enemy), write(" caused "), write(Damage), write(" damage"),
+    write(Enemy), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyLose(Champions, Team, Party, Defender, NewDefenderHP, DefenderSpecial, Enemy, EnemyHP, NewEnemySpecial);
     
     champion(DefenderClass,Defender,_,_,_,_),
     champion(_,Defender,_,_,_,DefenderDef),
     champion(EnemyClass,Enemy,_,_,_,_),
-    champion(_,Enemy,_,_,EnemySpecialAttack,_),    
+    champion(_,Enemy,_,_,EnemySpecialAttack,_),
     calDamage(EnemySpecialAttack, DefenderDef, EnemyClass, DefenderClass, Damage),
     NewDefenderHP is DefenderHP - Damage,
-    write(Enemy), write(" caused "), write(Damage), write(" damage"),
+    write(Enemy), write(" caused "), write(Damage), write(" damage."), nl, nl,
     verifyLose(Champions, Team, Party, Defender, NewDefenderHP, DefenderSpecial, Enemy, EnemyHP, 0).
     
-verifyLose(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial):- 
-    DefenderHP =< 0 -> write(Defender), writeln(" was defeated"), verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial);
+verifyLose(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial) :-
+    DefenderHP =< 0 -> write(Defender), writeln(" was defeated."), nl, verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial);
     attack(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial).
 
 verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial) :-
