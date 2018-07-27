@@ -113,7 +113,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     
     (Attack =:= 2, AttackerSpecial < 5) -> nl, writeln("This action is unavailable, please try again..."), nl, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
     
-    writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial)).
+    nl, writeln("Wrong answer, please try again..."), nl, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial)).
 
 verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial) :-
     EnemyHP =< 0 -> writeln("Congratulations, you win!"), nl, newTeammate(Champions, Team, Enemy);
@@ -195,7 +195,7 @@ champion("Mutant", "Wolverine", 300, 58, 87, 26).
 champion("Mutant", "Deadpool", 320, 63, 95, 25).
 champion("Mystic", "Loki", 340, 68, 102, 24).
 champion("Tech", "Ultron", 360, 73, 110, 23).
-champion("Mystic", "Doctor_Strange", 380, 78, 117, 22).
+champion("Mystic", "Doctor Strange", 380, 78, 117, 22).
 champion("Cosmic", "Thanos", 400, 83, 125, 21).
 champion("Cosmic", "Thor", 420, 88, 132, 20).
 
@@ -206,9 +206,6 @@ advantage("Science","Mystic").
 advantage("Mystic","Cosmic").
 advantage("Cosmic","Tech").
 advantage("Tech","Mutant").
-
-% Condição de derrota
-battleLost(0,0,0).
 
 %
 %% IMPLEMENTAÇÕES DE MANIPULAÇÃO DE LISTAS
@@ -285,16 +282,3 @@ calDamage(Damage, Defense, Atk, Def, Result) :-
 
 calDamageAdvantage(Damage,Adv,Atk,Def,DamageAdv) :-
     advantage(Atk,Def) -> DamageAdv is Damage + Adv ; DamageAdv is Damage.
-
-% Recebe a lista de campeões e verifica se ela está com todos os 12 (vitória).
-checkFinalVictory(Party, Result) :-
-    tamL(Party, Lenght),
-    Lenght =:= 12 -> Result = true ; Result = false.
-
-% Recebe o HP do campeão inimigo e verifica se ele estiver morto.
-checkPartialVictory(ChampionHP, Result) :-
-    ChampionHP=< 0 -> Result = true ; Result = false.
-
-% Recebe os três HPS dos campeões da party e verifica se todos estão derrotados
-checkBattleLost(ChampHP1,ChampHP2,ChampHP3,Result) :-
-    battleLost(ChampHP1,ChampHP2,ChampHP3) -> Result = true ; Result = false.
