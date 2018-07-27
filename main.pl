@@ -73,7 +73,7 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     write(Attacker), write(" caused "), write(Damage), write(" damage"),
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, NewAttackerSpecial, Enemy, NewEnemyHP, EnemySpecial);
     
-    Attack =:= 2, AttackerSpecial =:= 5 -> 
+    (Attack =:= 2, AttackerSpecial =:= 5) -> 
     champion(AttackerClass,Attacker,_,_,_,_),
     champion(_,Attacker,_,_,AttackerSpecialAttack,_), 
     champion(EnemyClass,Enemy,_,_,_,_),
@@ -83,29 +83,66 @@ attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, Ene
     write(Attacker), write(" caused "), write(Damage), write(" damage"),
     verifyWin(Champions, Team, Party, Attacker, AttackerHP, 0, Enemy, NewEnemyHP, EnemySpecial);
 
-    Attack =:= 2, AttackerSpecial =\= 5 -> writeln("This action is unavailable, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
+    (Attack =:= 2, AttackerSpecial =\= 5) -> writeln("This action is unavailable, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial); 
     
-    writeln("Wrong answer, please try again..."), attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).      
+    writeln("Wrong answer, please try again..."), Attack = Attack, attack(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).      
 
 verifyWin(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial):- 
     EnemyHP =< 0 -> writeln("Congratulations, you win !"), newTeammate(Champions, Team, Party, Enemy);
     defend(Champions, Team, Party, Attacker, AttackerHP, AttackerSpecial, Enemy, EnemyHP, EnemySpecial).
 
-newTeammate(Champions, Team, Party, Enemy):- Champions = Champions, Team = Team, Party = Party, Enemy = Enemy.
+newTeammate(Champions, Team, Party, Enemy):-
+    addChampion(Enemy, Team, NewTeam),
+    tamL(NewTeam,LengthNewTeam),
+    LengthNewTeam =:= 12 -> youWin ;
+    createEnemy(Champions, NewEnemy, NewChampions),
+    Party = [], 
+    thisIsYourTeam(NewChampions, NewTeam, Party, NewEnemy).
+
+youWin :- writeLn("Mission Complete: Congratulations, you got the grace of the champions.").
 
 defend(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial):-
-        Champions = Champions, Team = Team, Party = Party, Enemy = Enemy, Defender = Defender, DefenderHP = DefenderHP,
-        DefenderSpecial = DefenderSpecial, EnemyHP = EnemyHP, EnemySpecial = EnemySpecial.
+    EnemySpecial =\= 5 -> 
+    champion(DefenderClass,Defender,_,_,_,_),
+    champion(_,Defender,_,_,_,DefenderDef),
+    champion(EnemyClass,Enemy,_,_,_,_),
+    champion(_,Enemy,_,EnemyNormalAttack,_,_),    
+    calDamage(EnemyNormalAttack, DefenderDef, EnemyClass, DefenderClass, Damage),
+    NewDefenderHP is DefenderHP - Damage,
+    NewEnemySpecial is EnemySpecial + 1,
+    write(Enemy), write(" caused "), write(Damage), write(" damage"),
+    verifyLose(Champions, Team, Party, Defender, NewDefenderHP, DefenderSpecial, Enemy, EnemyHP, NewEnemySpecial);
     
+    champion(DefenderClass,Defender,_,_,_,_),
+    champion(_,Defender,_,_,_,DefenderDef),
+    champion(EnemyClass,Enemy,_,_,_,_),
+    champion(_,Enemy,_,_,EnemySpecialAttack,_),    
+    calDamage(EnemySpecialAttack, DefenderDef, EnemyClass, DefenderClass, Damage),
+    NewDefenderHP is DefenderHP - Damage,
+    write(Enemy), write(" caused "), write(Damage), write(" damage"),
+    verifyLose(Champions, Team, Party, Defender, NewDefenderHP, DefenderSpecial, Enemy, EnemyHP, 0).
+    
+verifyLose(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial):- 
+    DefenderHP =< 0 -> write(Defender), writeln(" was defeated"), verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial);
+    attack(Champions, Team, Party, Defender, DefenderHP, DefenderSpecial, Enemy, EnemyHP, EnemySpecial).
 
+verifyParty(Champions, Team, Party, Defender, Enemy, EnemyHP, EnemySpecial) :-
+    removeChampion(Defender, Party, NewParty),
+    tamL(NewParty,LengthNewParty),
+    
+    LengthNewParty =:= 0 -> youLose ;
+    
+    getElement(0, NewParty, NewAttacker),
+    champion(_,NewAttacker,NewAttackerHP,_,_,_),
+    attack(Champions, Team, NewParty, NewAttacker, NewAttackerHP, 0, Enemy, EnemyHP, EnemySpecial).
 
-
+youLose :- writeln("Mission Failed: Game Over").
 
 
 
 % Printar todos os elementos de uma lista, enumerados
-printList(N ,[H]) :- write(N), write(" - "), writeln(H).
-printList(N, [H|T]) :- write(N), write(" - "), writeln(H), NewN is N + 1, printList(NewN,T).
+printList(N ,[H]) :- write(N), write(" - "), champion(C,H,_,_,_,_), write(C), write(" "), writeln(H).
+printList(N, [H|T]) :- write(N), write(" - "), champion(C,H,_,_,_,_), write(C), write(" "), writeln(H), NewN is N + 1, printList(NewN,T).
 
 %
 %% FATOS
